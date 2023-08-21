@@ -26,6 +26,11 @@ contract StdReferenceBasic is AccessControl, StdReferenceBase {
         _grantRole(RELAYER_ROLE, msg.sender);
     }
 
+    function transferContractOwnership(address newOwner) external onlyRole(DEFAULT_ADMIN_ROLE) {
+    require(newOwner != address(0), "INVALID_ADDRESS");
+    _revokeRole(DEFAULT_ADMIN_ROLE, msg.sender); 
+    _grantRole(DEFAULT_ADMIN_ROLE, newOwner); 
+    }
     /**
      * @dev Grants `RELAYER_ROLE` to `accounts`.
      *
@@ -127,6 +132,15 @@ contract StdReferenceBasic is AccessControl, StdReferenceBase {
         return ReferenceData({rate: (baseRate * 1e18) / quoteRate, lastUpdatedBase: baseLastUpdate, lastUpdatedQuote: quoteLastUpdate});
     }
 
+    function getReferenceDataBulk(string[] memory _bases, string[] memory _quotes) public view override onlyWhitelisted returns (ReferenceData[] memory) {
+        require(_bases.length == _quotes.length, "BAD_INPUT_LENGTH");
+        uint256 len = _bases.length;
+        ReferenceData[] memory results = new ReferenceData[](len);
+        for (uint256 idx = 0; idx < len; idx++) {
+            results[idx] = getReferenceData(_bases[idx], _quotes[idx]);
+        }
+        return results;
+    }
     /// @notice Get the price data of a token
     /// @param symbol the symbol of the token whose price to query
     function _getRefData(string memory symbol) internal view returns (uint256 rate, uint256 lastUpdate) {
