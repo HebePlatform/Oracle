@@ -3,7 +3,7 @@ pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "https://github.com/HebePlatform/Oracle/blob/main/StdReferenceBasic.sol";
+import "./StdReferenceBasic.sol";
 
 contract MyNFT is ERC721Enumerable, Ownable {
     address public referenceContractAddress;
